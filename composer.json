@@ -1,0 +1,27 @@
+{
+    "name": "neissa/pi-phplcd7segment",
+    "type": "library",
+    "description": "",
+    "keywords": ["7segment","lcd","GPIO", "hardware", "chipset", "input", "output", "port", "pin", "chip", "sensors", "raspberry", "raspberry pi"],
+    "homepage": "https://github.com/neissa/pi-phplcd7segment",
+    "license": "GNU",
+    "authors": [
+        {
+            "name": "PERRIER Pierre-Dominique",
+            "email": "perrier.p@gmail.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/neissa/php-gpio"
+        }
+    ],
+   "require": {
+        "php": ">=5.3.0",
+        "ronanguilloux/php-gpio": "master-dev"
+    },
+   "autoload": {
+        "psr-4": { "phplcd7segment\\": "src/" }
+    }
+}
