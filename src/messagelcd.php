@@ -21,26 +21,18 @@ class messagelcd
     {
         if ('cli' == PHP_SAPI) 
         {
-            if ('root' !== $_SERVER['USER'] || empty($_SERVER['SUDO_USER'])) {
+            /*if ('root' !== $_SERVER['USER'] || empty($_SERVER['SUDO_USER'])) {
                 echo $msg = "Please run this script as root, using sudo -t ; please check the README file";
                 throw new \Exception($msg);
-            }
+            }*/
             
             $lcds = array(
                     'lcd1'=>array('SDI'=>18,'RCLK'=>23,'SRCLK'=>22),
                     'lcd2'=>array('SDI'=>6,'RCLK'=>13,'SRCLK'=>19)
             );
             $this->setup($lcds);
-            $texte          = $argv[1];
-            $taille_chaine  = strlen($texte);
-            $texte         .= str_repeat(' ',count($this->lcds));
-            foreach( range(0,$taille_chaine) as $i)
-            {
-                $lcd_number = 0;
-                foreach( $this->lcds as $lcd )
-                    $lcd->affiche($texte[''.$i+$lcd_number++]);
-                usleep(300*1000);
-            }
+            $this->compteur($argv[1], 10);
+            $this->messageFixe($argv[1], 200);
         }
         else
         {
@@ -49,6 +41,45 @@ class messagelcd
             echo '<pre>';var_dump($a);
         
         }
+    }
+    public static function shutdwon()
+    {
+        exec('pkill -f "'.__FILE__.'"');
+    }
+    public function messageDefilant($texte, $vitesse = 300, $infini=false)
+    {
+        $taille_chaine  = strlen($texte);
+        $texte         = str_repeat(' ',count($this->lcds)).$texte;
+        do
+        {
+            foreach( range(0,$taille_chaine) as $i)
+            {
+                $lcd_number = 0;
+                foreach( $this->lcds as $lcd )
+                {
+                    $lcd->affiche($texte[''.$i+$lcd_number++]);
+                }
+                usleep($vitesse*1000);
+            }
+        }while($infini);
+    }
+    public function compteur($nombre, $vitesse = 300)
+    {
+        $nombre = min($nombre, pow(10, count($this->lcds))-1 );
+        $i=0;
+        for( $i = 0; $i < $nombre; $i++)
+        {
+            $this->messageFixe(str_pad($nombre-$i,count($this->lcds),'0',STR_PAD_LEFT));
+            usleep($vitesse*1000);
+        }
+    }
+    public function messageFixe($texte)
+    {
+        $taille_chaine  = strlen($texte);
+        $texte         .= str_repeat(' ',count($this->lcds));
+        $lcd_number = 0;
+        foreach( $this->lcds as $lcd )
+            $lcd->affiche($texte[''.$lcd_number++]);
     }
     public function setup($lcds)
     {
