@@ -27,10 +27,11 @@ class messagelcd
             }*/
             
             $lcds = array(
-                    'lcd1'=>array('SDI'=>18,'RCLK'=>23,'SRCLK'=>22),
+                    'lcd1'=>array('SDI'=>18,'RCLK'=>23,'SRCLK'=>24),
                     'lcd2'=>array('SDI'=>6,'RCLK'=>13,'SRCLK'=>19)
             );
             $this->setup($lcds);
+            $this->heure();
             $this->compteur($argv[1], 10);
             $this->messageFixe($argv[1], 200);
         }
@@ -62,6 +63,15 @@ class messagelcd
                 usleep($vitesse*1000);
             }
         }while($infini);
+    }
+    public function heure()
+    {
+        do
+        {
+            $this->messageDefilant(date('d m Y H\hi'), $vitesse = 400, $infini=false);
+        }
+        while(0&&true);
+        
     }
     public function compteur($nombre, $vitesse = 300)
     {
