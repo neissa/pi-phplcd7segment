@@ -6,6 +6,8 @@ class messagelcd
 {
     const GPIO_LOW = 0;
     const GPIO_HIGH = 1;
+    const GAUCHE = 0;
+    const DROITE = 1;
     private $lcds = array();
     public static function cli()
     {
@@ -31,8 +33,9 @@ class messagelcd
                     'lcd2'=>array('SDI'=>6,'RCLK'=>13,'SRCLK'=>19)
             );
             $this->setup($lcds);
-            $this->heure();
-            $this->compteur($argv[1], 10);
+            //$this->heure();
+            //$this->compteur($argv[1], 10);
+            $this->messageDefilant($argv[1], 200, self::GAUCHE, self::DROITE);
             $this->messageFixe($argv[1], 200);
         }
         else
@@ -47,16 +50,20 @@ class messagelcd
     {
         exec('pkill -f "'.__FILE__.'"');
     }
-    public function messageDefilant($texte, $vitesse = 300, $infini=false)
+    public function messageDefilant($texte, $vitesse = 300, $demarre=self::DROITE ,$direction=self::GAUCHE, $infini=false)
     {
         $taille_chaine  = strlen($texte);
-        $texte         = str_repeat(' ',count($this->lcds)).$texte;
+        $padding        = str_repeat(' ',count($this->lcds));
+        $texte          = ($demarre==self::DROITE?$padding:'').$texte.($demarre!=self::DROITE?$padding:'');
+        if( $direction == self::DROITE)
+            $texte = strrev($texte);
+        $lcds = $direction==self::DROITE?array_reverse ($this->lcds):$this->lcds;
         do
         {
             foreach( range(0,$taille_chaine) as $i)
             {
                 $lcd_number = 0;
-                foreach( $this->lcds as $lcd )
+                foreach( $lcds as $lcd )
                 {
                     $lcd->affiche($texte[''.$i+$lcd_number++]);
                 }
@@ -68,7 +75,7 @@ class messagelcd
     {
         do
         {
-            $this->messageDefilant(date('d m Y H\hi'), $vitesse = 400, $infini=false);
+            $this->messageDefilant(date('d m Y H\hi'), $vitesse = 400, $demarre=self::GAUCHE);
         }
         while(0&&true);
         
