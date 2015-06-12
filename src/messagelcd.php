@@ -33,8 +33,9 @@ class messagelcd
                     'lcd2'=>array('SDI'=>6,'RCLK'=>13,'SRCLK'=>19)
             );
             $this->setup($lcds);
-            //$this->heure();
-            //$this->compteur($argv[1], 10);
+            $this->heure();
+            $this->compteur($argv[1], 10);
+            $this->messageDefilant($argv[1], 200, self::DROITE, self::GAUCHE);
             $this->messageDefilant($argv[1], 200, self::GAUCHE, self::DROITE);
             $this->messageFixe($argv[1], 200);
         }
